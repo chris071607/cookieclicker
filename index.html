@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Clicker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    #cookie {
+      width: 200px;
+      cursor: pointer;
+      margin: 20px auto;
+    }
+    #counter {
+      font-size: 2em;
+      color: #555;
+    }
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cookie Clicker</h1>
+  <img id="cookie" src="https://upload.wikimedia.org/wikipedia/commons/7/74/Cookie_icon.svg" alt="Cookie">
+  <div id="counter">Cookies: 0</div>
+  <button id="auto-clicker" class="button" disabled>Buy Auto-Clicker (50 Cookies)</button>
+  <button id="multiplier" class="button" disabled>Buy Multiplier (100 Cookies)</button>
+
+  <script>
+    let cookieCount = 0;
+    let autoClickerPrice = 50;
+    let multiplierPrice = 100;
+    let multiplier = 1;
+
+    const cookie = document.getElementById('cookie');
+    const counter = document.getElementById('counter');
+    const autoClickerButton = document.getElementById('auto-clicker');
+    const multiplierButton = document.getElementById('multiplier');
+
+    function updateCounter() {
+      counter.textContent = `Cookies: ${cookieCount}`;
+      autoClickerButton.disabled = cookieCount < autoClickerPrice;
+      multiplierButton.disabled = cookieCount < multiplierPrice;
+    }
+
+    cookie.addEventListener('click', () => {
+      cookieCount += multiplier;
+      updateCounter();
+    });
+
+    autoClickerButton.addEventListener('click', () => {
+      if (cookieCount >= autoClickerPrice) {
+        cookieCount -= autoClickerPrice;
+        autoClickerPrice = Math.floor(autoClickerPrice * 1.5);
+        autoClickerButton.textContent = `Buy Auto-Clicker (${autoClickerPrice} Cookies)`;
+
+        setInterval(() => {
+          cookieCount += multiplier;
+          updateCounter();
+        }, 1000);
+
+        updateCounter();
+      }
+    });
+
+    multiplierButton.addEventListener('click', () => {
+      if (cookieCount >= multiplierPrice) {
+        cookieCount -= multiplierPrice;
+        multiplier += 1;
+        multiplierPrice = Math.floor(multiplierPrice * 1.5);
+        multiplierButton.textContent = `Buy Multiplier (${multiplierPrice} Cookies)`;
+        updateCounter();
+      }
+    });
+
+    updateCounter();
+  </script>
+</body>
+</html>
