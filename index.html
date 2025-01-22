@@ -100,7 +100,8 @@
     let prestigePoints = 0;
     let achievements = [];
     const achievementThresholds = [100, 500, 1000, 5000, 10000];
-
+    let autoClickerActive = false; // Nieuw: Houd bij of de auto-clicker actief is.
+  
     const cookie = document.getElementById('cookie');
     const counter = document.getElementById('counter');
     const prestigeCounter = document.getElementById('prestige');
@@ -109,19 +110,19 @@
     const prestigeButton = document.getElementById('prestige-button');
     const progressBar = document.getElementById('progress-bar');
     const achievementsList = document.getElementById('achievement-list');
-
+  
     function updateCounter() {
       counter.textContent = `Cookies: ${cookieCount}`;
       prestigeCounter.textContent = `Prestige Points: ${prestigePoints}`;
       autoClickerButton.disabled = cookieCount < autoClickerPrice;
       multiplierButton.disabled = cookieCount < multiplierPrice;
       prestigeButton.disabled = cookieCount < 5000;
-
+  
       const progress = Math.min((cookieCount / Math.max(autoClickerPrice, multiplierPrice)) * 100, 100);
       progressBar.style.width = `${progress}%`;
       checkAchievements();
     }
-
+  
     function checkAchievements() {
       achievementThresholds.forEach(threshold => {
         if (cookieCount >= threshold && !achievements.includes(threshold)) {
@@ -132,27 +133,44 @@
         }
       });
     }
-
+  
+    function moveCookie() {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const cookieSize = cookie.offsetWidth;
+  
+      const newX = Math.random() * (screenWidth - cookieSize);
+      const newY = Math.random() * (screenHeight - cookieSize);
+  
+      cookie.style.position = 'absolute';
+      cookie.style.left = `${newX}px`;
+      cookie.style.top = `${newY}px`;
+    }
+  
     cookie.addEventListener('click', () => {
       cookieCount += multiplier;
       updateCounter();
     });
-
+  
     autoClickerButton.addEventListener('click', () => {
       if (cookieCount >= autoClickerPrice) {
         cookieCount -= autoClickerPrice;
         autoClickerPrice = Math.floor(autoClickerPrice * 1.5);
         autoClickerButton.textContent = `Buy Auto-Clicker (${autoClickerPrice} Cookies)`;
-
-        setInterval(() => {
-          cookieCount += multiplier;
-          updateCounter();
-        }, 1000);
-
+  
+        if (!autoClickerActive) {
+          autoClickerActive = true; 
+          setInterval(() => {
+            cookieCount += multiplier;
+            moveCookie(); 
+            updateCounter();
+          }, 1500);
+        }
+  
         updateCounter();
       }
     });
-
+  
     multiplierButton.addEventListener('click', () => {
       if (cookieCount >= multiplierPrice) {
         cookieCount -= multiplierPrice;
@@ -162,7 +180,7 @@
         updateCounter();
       }
     });
-
+  
     prestigeButton.addEventListener('click', () => {
       if (cookieCount >= 5000) {
         prestigePoints += 1;
@@ -177,8 +195,9 @@
         updateCounter();
       }
     });
-
+  
     updateCounter();
   </script>
+  
 </body>
 </html>
