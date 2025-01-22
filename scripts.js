@@ -75,22 +75,24 @@ function showTooltip(amount, x, y) {
 }
 
 function spawnGoldenCookie() {
-  const goldenCookie = document.createElement("img");
-  goldenCookie.src = "assets/img/golden_cookie.png"; 
-  goldenCookie.style.position = "absolute";
-  goldenCookie.style.top = `${Math.random() * window.innerHeight}px`;
-  goldenCookie.style.left = `${Math.random() * window.innerWidth}px`;
-  goldenCookie.style.cursor = "pointer";
-  goldenCookie.style.width = "50px";
-  goldenCookie.addEventListener("click", () => {
-    goldenCookies++;
-    cookieCount += 50 * multiplier; 
-    updateCounter();
-    goldenCookie.remove(); 
-  });
-  document.body.appendChild(goldenCookie);
-  setTimeout(() => goldenCookie.remove(), 5000);
-}
+    const goldenCookie = document.createElement("img");
+    goldenCookie.src = "assets/img/golden_cookie.png";
+    goldenCookie.style.position = "absolute";
+    goldenCookie.style.top = `${Math.random() * window.innerHeight}px`;
+    goldenCookie.style.left = `${Math.random() * window.innerWidth}px`;
+    goldenCookie.style.cursor = "pointer";
+    goldenCookie.style.width = "50px";
+    goldenCookie.setAttribute("draggable", "false"); // Prevent dragging
+    goldenCookie.addEventListener("click", () => {
+      goldenCookies++;
+      cookieCount += 50 * multiplier;
+      updateCounter();
+      goldenCookie.remove();
+    });
+    document.body.appendChild(goldenCookie);
+    setTimeout(() => goldenCookie.remove(), 5000);
+  }
+  
 
 function spawnSnowflake() {
   const snowflake = document.createElement('div');

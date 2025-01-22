@@ -71,6 +71,7 @@ h1 {
     user-drag: none;
 }
 
+
 #cookie:active {
     transform: scale(0.95);
 }
