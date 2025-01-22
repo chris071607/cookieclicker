@@ -29,23 +29,53 @@ body.winter-theme {
     background: url('assets/img/snowy_background.jpg') no-repeat center center fixed;
     background-size: cover;
     transition: background 0.3s ease;
+    overflow: hidden;
+}
+
+/* Snowflakes */
+.snowflake {
+    position: absolute;
+    top: -50px; /* Start position off-screen */
+    width: 25px;  /* Adjust snowflake size */
+    height: 25px;  /* Adjust snowflake size */
+    background-image: url('assets/img/snowflake.png'); /* Make sure this image exists */
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+    pointer-events: none; /* Prevent snowflakes from interfering with user interaction */
+    animation: snowflakeFall linear infinite;
+    z-index: 9999; /* Ensure snowflakes appear above other content */
+}
+
+/* Snowflake falling animation */
+@keyframes snowflakeFall {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) translateX(calc(50vw - 50%));
+        opacity: 0;
+    }
 }
 
 /* Button Styles */
 .theme-button {
-    padding: 10px 20px;
+    padding: 12px 25px;
     background-color: #00796b;
     border-radius: 25px;
     color: white;
     font-size: 1.2em;
     margin: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .theme-button:hover {
     background-color: #004d40;
     transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
 }
 
 .theme-button:active {
@@ -54,35 +84,46 @@ body.winter-theme {
 
 h1 {
     color: #fff;
-    font-size: 3em;
+    font-size: 3.5em;
     margin: 20px 0;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
 }
 
+/* Enhanced Cookie */
 #cookie {
-    width: 200px;
+    width: 180px;
     cursor: pointer;
     margin: 20px auto;
     transition: transform 0.1s ease, left 0.5s ease, top 0.5s ease;
     pointer-events: all;
     border-radius: 50%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     transform: scale(1);
     user-drag: none;
+    border: 5px solid rgba(255, 255, 255, 0.5);
 }
-
 
 #cookie:active {
     transform: scale(0.95);
 }
 
+/* Cookie Counter and Prestige */
 #counter, #prestige {
-    font-size: 2em;
+    font-size: 2.5em;
     color: #fff;
     margin: 10px 0;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+#golden-cookie {
+    font-size: 2.5em;
+    color: #ffeb3b;
+    margin: 10px 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons */
 .button {
     margin: 10px;
     padding: 12px 24px;
@@ -93,13 +134,14 @@ h1 {
     border: none;
     border-radius: 15px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover:not(:disabled) {
     background-color: #e64a19;
     transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
 }
 
 .button:disabled {
@@ -107,6 +149,7 @@ h1 {
     cursor: not-allowed;
 }
 
+/* Progress Bar */
 .progress-bar-container {
     background-color: #ddd;
     border-radius: 25px;
@@ -124,10 +167,11 @@ h1 {
     transition: width 0.3s ease;
 }
 
+/* Achievements */
 .achievements {
     margin: 20px 0;
     padding: 15px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
     display: inline-block;
     max-width: 90%;
@@ -136,6 +180,7 @@ h1 {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Cookie Tooltip */
 .cookie-tooltip {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.7);

@@ -27,12 +27,14 @@ const winterThemeButton = document.getElementById("winter-theme");
 normalThemeButton.addEventListener("click", () => {
     document.body.classList.remove("winter-theme");
     document.body.classList.add("normal-theme");
+    stopSnowstorm(); // Stop snowstorm when switching back
 });
 
 // Switch to winter theme
 winterThemeButton.addEventListener("click", () => {
     document.body.classList.remove("normal-theme");
     document.body.classList.add("winter-theme");
+    startSnowstorm(); // Start snowstorm when switching to winter theme
 });
 
 function updateCounter() {
@@ -62,7 +64,6 @@ function checkAchievements() {
   });
 }
 
-
 function showTooltip(amount, x, y) {
   cookieTooltip.textContent = `+${amount} Cookies`;
   cookieTooltip.style.left = `${x}px`;
@@ -90,62 +91,80 @@ function spawnGoldenCookie() {
       goldenCookie.remove();
     });
     document.body.appendChild(goldenCookie);
-    setTimeout(() => goldenCookie.remove(), 5000);
-  }
-  
 
-function spawnSnowflake() {
-  const snowflake = document.createElement('div');
-  snowflake.classList.add('snowflake');
-  snowflake.style.left = `${Math.random() * window.innerWidth}px`;
-  snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
-  document.body.appendChild(snowflake);
-  
-  setTimeout(() => snowflake.remove(), 5000);
-}
-
-function startSnowstorm() {
-  if (cookieCount >= 10000 && !snowstormActive) {
-    snowstormActive = true;
-    document.body.style.filter = 'blur(5px)';
-    snowstormTimeout = setTimeout(() => {
-      snowstormActive = false;
-      document.body.style.filter = 'none';
-    }, 3000);
-  }
-}
-
-function moveCookie() {
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
-  const cookieSize = cookie.offsetWidth;
-
-  const targetX = Math.random() * (screenWidth - cookieSize);
-  const targetY = Math.random() * (screenHeight - cookieSize);
-
-  let currentX = cookie.offsetLeft;
-  let currentY = cookie.offsetTop;
-
-  const step = 5;
-
-  const moveInterval = setInterval(() => {
-    if (
-      Math.abs(currentX - targetX) <= step &&
-      Math.abs(currentY - targetY) <= step
-    ) {
-      clearInterval(moveInterval);
-    } else {
-      if (currentX < targetX) currentX += step;
-      if (currentX > targetX) currentX -= step;
-      if (currentY < targetY) currentY += step;
-      if (currentY > targetY) currentY -= step;
-
-      cookie.style.left = `${currentX}px`;
-      cookie.style.top = `${currentY}px`;
+    // Ensure the golden cookie doesn't spawn in a position where it can't be clicked
+    if (goldenCookie.getBoundingClientRect().top < 0 || goldenCookie.getBoundingClientRect().bottom > window.innerHeight ||
+        goldenCookie.getBoundingClientRect().left < 0 || goldenCookie.getBoundingClientRect().right > window.innerWidth) {
+        goldenCookie.remove();
+        spawnGoldenCookie(); // Retry if out of bounds
     }
-  }, 10);
+
+    setTimeout(() => goldenCookie.remove(), 5000);
 }
 
+let snowstormActive = false; // Flag to track the snowstorm
+let snowstormTimeout;
+let snowflakeInterval;
+
+// Function to start snowstorm effect
+function startSnowstorm() {
+    if (!snowstormActive && document.body.classList.contains("winter-theme")) { // Only start snowstorm if winter theme is active
+        snowstormActive = true;
+        document.body.style.transition = 'filter 0.3s ease';
+
+        // Spawn snowflakes continuously
+        snowflakeInterval = setInterval(spawnSnowflake, 100); // Create snowflakes every 100ms
+
+        setTimeout(() => {
+            snowstormActive = false;
+            document.body.style.filter = 'none'; // Reset the page filter after snowstorm ends
+            clearInterval(snowflakeInterval); // Stop the snowflakes after snowstorm duration
+        }, 3000); // Snowstorm duration
+    }
+}
+
+// Function to stop snowstorm effect (when theme switches)
+function stopSnowstorm() {
+    if (snowstormActive) {
+        snowstormActive = false;
+        document.body.style.filter = 'none'; // Reset the page filter
+        clearInterval(snowflakeInterval); // Stop the snowflakes
+    }
+}
+
+// Function to spawn snowflakes
+function spawnSnowflake() {
+    if (document.body.classList.contains("winter-theme")) { // Only spawn snowflakes if winter theme is active
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        
+        // Randomly position the snowflake horizontally
+        snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+        
+        // Random animation duration between 2 to 5 seconds
+        snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        
+        document.body.appendChild(snowflake);
+
+        // Remove snowflake after the animation is complete
+        setTimeout(() => snowflake.remove(), parseFloat(snowflake.style.animationDuration) * 1000);
+    }
+}
+
+// Start snowflakes on page load
+setInterval(spawnSnowflake, 300);
+
+// Trigger snowstorm when cookie count reaches a threshold (example: 10,000 cookies)
+function startSnowstormIfEligible() {
+    if (cookieCount >= 10000 && !snowstormActive) {
+        startSnowstorm(); // Trigger snowstorm effect when cookie count reaches 10,000
+    }
+}
+
+// Check if snowstorm should start
+setInterval(startSnowstormIfEligible, 500);
+
+// Event listener for cookie click
 cookie.addEventListener("click", (e) => {
   cookieCount += multiplier;
   updateCounter();
@@ -197,8 +216,6 @@ prestigeButton.addEventListener("click", () => {
   }
 });
 
-setInterval(spawnGoldenCookie, 10000);
-setInterval(spawnSnowflake, 300);
-setInterval(startSnowstorm, 500);
+setInterval(spawnGoldenCookie, 10000); // Spawn golden cookie every 10 seconds
 
 updateCounter();
