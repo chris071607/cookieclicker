@@ -1,321 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cookie Clicker</title>
-    <style>
-      body {
-        font-family: "Poppins", Arial, sans-serif;
-        text-align: center;
-        background: linear-gradient(135deg, #f8b400, #f3f4f6);
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        overflow: hidden;
-        user-select: none; 
-      }
-
-      h1 {
-        color: #fff;
-        font-size: 3em;
-        margin: 20px 0;
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-      }
-
-      #cookie {
-        width: 200px;
-        cursor: pointer;
-        margin: 20px auto;
-        transition: transform 0.1s ease, left 0.5s ease, top 0.5s ease;
-        pointer-events: all;
-        border-radius: 50%;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        transform: scale(1);
-        user-drag: none;
-      }
-
-      #cookie:active {
-        transform: scale(0.95);
-      }
-
-      #counter,
-      #prestige {
-        font-size: 2em;
-        color: #fff;
-        margin: 10px 0;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-      }
-
-      .button {
-        margin: 10px;
-        padding: 12px 24px;
-        font-size: 1.2em;
-        font-weight: bold;
-        background-color: #ff5722;
-        color: white;
-        border: none;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      }
-
-      .button:hover:not(:disabled) {
-        background-color: #e64a19;
-        transform: translateY(-2px);
-      }
-
-      .button:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-
-      .progress-bar-container {
-        background-color: #ddd;
-        border-radius: 25px;
-        overflow: hidden;
-        width: 80%;
-        height: 30px;
-        margin: 20px auto;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      }
-
-      .progress-bar {
-        height: 100%;
-        width: 0;
-        background: #4caf50;
-        transition: width 0.3s ease;
-      }
-
-      .achievements {
-        margin: 20px 0;
-        padding: 15px;
-        background: #fff;
-        border-radius: 10px;
-        display: inline-block;
-        max-width: 90%;
-        text-align: left;
-        color: #333;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      }
-
-      .cookie-tooltip {
-        position: absolute;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 10px;
-        font-size: 16px;
-        transform: translate(-50%, -50%);
-        display: none;
-        pointer-events: none;
-        animation: tooltip-animation 0.5s ease;
-      }
-
-      @keyframes tooltip-animation {
-        0% {
-          transform: translate(-50%, -50%) scale(0.7);
-          opacity: 0;
-        }
-        50% {
-          transform: translate(-50%, -50%) scale(1.1);
-          opacity: 1;
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 1;
-        }
-      }
-    </style>
-  </head>
-  <body>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
     <h1>🍪 Cookie Clicker</h1>
-    <img id="cookie" src="cookie.png" alt="Cookie" draggable="false" />
+    <img
+        id="cookie"
+        src="assets/img/cookie.png"
+        alt="Cookie"
+        draggable="false"
+    />
     <div id="counter">Cookies: 0</div>
     <div id="prestige">Prestige Points: 0</div>
     <div id="golden-cookie">Golden Cookies: 0</div>
     <div class="progress-bar-container">
-      <div class="progress-bar" id="progress-bar"></div>
+        <div class="progress-bar" id="progress-bar"></div>
     </div>
     <button id="auto-clicker" class="button" disabled>
-      Buy Auto-Clicker (50 Cookies)
+        Buy Auto-Clicker (50 Cookies)
     </button>
     <button id="multiplier" class="button" disabled>
-      Buy Multiplier (100 Cookies)
+        Buy Multiplier (100 Cookies)
     </button>
     <button id="prestige-button" class="button" disabled>
-      Prestige (5000 Cookies)
+        Prestige (5000 Cookies)
     </button>
     <div class="achievements" id="achievements">
-      <strong>Achievements:</strong>
-      <ul id="achievement-list"></ul>
+        <strong>Achievements:</strong>
+        <ul id="achievement-list"></ul>
     </div>
     <div class="cookie-tooltip" id="cookie-tooltip"></div>
 
-    <script>
-      let cookieCount = 0;
-      let autoClickerPrice = 50;
-      let multiplierPrice = 100;
-      let multiplier = 1;
-      let prestigePoints = 0;
-      let goldenCookies = 0;
-      let achievements = [];
-      const achievementThresholds = [100, 500, 1000, 5000, 10000];
-      let autoClickerActive = false;
-      const cookieTooltip = document.getElementById("cookie-tooltip");
-
-      const cookie = document.getElementById("cookie");
-      const counter = document.getElementById("counter");
-      const prestigeCounter = document.getElementById("prestige");
-      const goldenCookieCounter = document.getElementById("golden-cookie");
-      const autoClickerButton = document.getElementById("auto-clicker");
-      const multiplierButton = document.getElementById("multiplier");
-      const prestigeButton = document.getElementById("prestige-button");
-      const progressBar = document.getElementById("progress-bar");
-      const achievementsList = document.getElementById("achievement-list");
-
-      function updateCounter() {
-        counter.textContent = `Cookies: ${cookieCount}`;
-        prestigeCounter.textContent = `Prestige Points: ${prestigePoints}`;
-        goldenCookieCounter.textContent = `Golden Cookies: ${goldenCookies}`;
-        autoClickerButton.disabled = cookieCount < autoClickerPrice;
-        multiplierButton.disabled = cookieCount < multiplierPrice;
-        prestigeButton.disabled = cookieCount < 5000;
-
-        const progress = Math.min(
-          (cookieCount / Math.max(autoClickerPrice, multiplierPrice)) * 100,
-          100
-        );
-        progressBar.style.width = `${progress}%`;
-        checkAchievements();
-      }
-
-      function checkAchievements() {
-        achievementThresholds.forEach((threshold) => {
-          if (cookieCount >= threshold && !achievements.includes(threshold)) {
-            achievements.push(threshold);
-            const li = document.createElement("li");
-            li.textContent = `Earned ${threshold} Cookies!`;
-            achievementsList.appendChild(li);
-          }
-        });
-      }
-
-      function showTooltip(amount, x, y) {
-        cookieTooltip.textContent = `+${amount} Cookies`;
-        cookieTooltip.style.left = `${x}px`;
-        cookieTooltip.style.top = `${y}px`;
-        cookieTooltip.style.display = "block";
-
-        setTimeout(() => {
-          cookieTooltip.style.display = "none";
-        }, 500);
-      }
-
-      function spawnGoldenCookie() {
-        const goldenCookie = document.createElement("img");
-        goldenCookie.src = "golden_cookie.png"; 
-        goldenCookie.style.position = "absolute";
-        goldenCookie.style.top = `${Math.random() * window.innerHeight}px`;
-        goldenCookie.style.left = `${Math.random() * window.innerWidth}px`;
-        goldenCookie.style.cursor = "pointer";
-        goldenCookie.style.width = "50px";
-        goldenCookie.addEventListener("click", () => {
-          goldenCookies++;
-          cookieCount += 50 * multiplier; 
-          updateCounter();
-          goldenCookie.remove(); 
-        });
-        document.body.appendChild(goldenCookie);
-        setTimeout(() => goldenCookie.remove(), 5000);
-      }
-
-      function moveCookie() {
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        const cookieSize = cookie.offsetWidth;
-
-        const targetX = Math.random() * (screenWidth - cookieSize);
-        const targetY = Math.random() * (screenHeight - cookieSize);
-
-        let currentX = cookie.offsetLeft;
-        let currentY = cookie.offsetTop;
-
-        const step = 5;
-
-        const moveInterval = setInterval(() => {
-          if (
-            Math.abs(currentX - targetX) <= step &&
-            Math.abs(currentY - targetY) <= step
-          ) {
-            clearInterval(moveInterval);
-          } else {
-            if (currentX < targetX) currentX += step;
-            if (currentX > targetX) currentX -= step;
-            if (currentY < targetY) currentY += step;
-            if (currentY > targetY) currentY -= step;
-
-            cookie.style.left = `${currentX}px`;
-            cookie.style.top = `${currentY}px`;
-          }
-        }, 10);
-      }
-
-      cookie.addEventListener("click", (e) => {
-        cookieCount += multiplier;
-        updateCounter();
-        showTooltip(multiplier, e.pageX, e.pageY);
-        moveCookie();
-      });
-
-      autoClickerButton.addEventListener("click", () => {
-        if (cookieCount >= autoClickerPrice) {
-          cookieCount -= autoClickerPrice;
-          autoClickerPrice = Math.floor(autoClickerPrice * 1.5);
-          autoClickerButton.textContent = `Buy Auto-Clicker (${autoClickerPrice} Cookies)`;
-
-          if (!autoClickerActive) {
-            autoClickerActive = true;
-            setInterval(() => {
-              cookieCount += multiplier;
-              updateCounter();
-              showTooltip(multiplier, cookie.offsetLeft, cookie.offsetTop);
-            }, 1500);
-          }
-
-          updateCounter();
-        }
-      });
-
-      multiplierButton.addEventListener("click", () => {
-        if (cookieCount >= multiplierPrice) {
-          cookieCount -= multiplierPrice;
-          multiplier += 1;
-          multiplierPrice = Math.floor(multiplierPrice * 1.5);
-          multiplierButton.textContent = `Buy Multiplier (${multiplierPrice} Cookies)`;
-          updateCounter();
-        }
-      });
-
-      prestigeButton.addEventListener("click", () => {
-        if (cookieCount >= 5000) {
-          prestigePoints += 1;
-          cookieCount = 0;
-          autoClickerPrice = 50;
-          multiplierPrice = 100;
-          multiplier = 1;
-          achievements = [];
-          achievementsList.innerHTML = "";
-          autoClickerButton.textContent = `Buy Auto-Clicker (50 Cookies)`;
-          multiplierButton.textContent = `Buy Multiplier (100 Cookies)`;
-          updateCounter();
-        }
-      });
-
-      setInterval(spawnGoldenCookie, 10000); 
-
-      updateCounter();
-    </script>
-  </body>
+    <script src="scripts.js"></script>
+</body>
 </html>
