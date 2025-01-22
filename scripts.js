@@ -19,6 +19,22 @@ const prestigeButton = document.getElementById("prestige-button");
 const progressBar = document.getElementById("progress-bar");
 const achievementsList = document.getElementById("achievement-list");
 
+// Theme switching
+const normalThemeButton = document.getElementById("normal-theme");
+const winterThemeButton = document.getElementById("winter-theme");
+
+// Switch to normal theme
+normalThemeButton.addEventListener("click", () => {
+    document.body.classList.remove("winter-theme");
+    document.body.classList.add("normal-theme");
+});
+
+// Switch to winter theme
+winterThemeButton.addEventListener("click", () => {
+    document.body.classList.remove("normal-theme");
+    document.body.classList.add("winter-theme");
+});
+
 function updateCounter() {
   counter.textContent = `Cookies: ${cookieCount}`;
   prestigeCounter.textContent = `Prestige Points: ${prestigePoints}`;
@@ -45,6 +61,7 @@ function checkAchievements() {
     }
   });
 }
+
 
 function showTooltip(amount, x, y) {
   cookieTooltip.textContent = `+${amount} Cookies`;
@@ -73,6 +90,27 @@ function spawnGoldenCookie() {
   });
   document.body.appendChild(goldenCookie);
   setTimeout(() => goldenCookie.remove(), 5000);
+}
+
+function spawnSnowflake() {
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+  snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+  document.body.appendChild(snowflake);
+  
+  setTimeout(() => snowflake.remove(), 5000);
+}
+
+function startSnowstorm() {
+  if (cookieCount >= 10000 && !snowstormActive) {
+    snowstormActive = true;
+    document.body.style.filter = 'blur(5px)';
+    snowstormTimeout = setTimeout(() => {
+      snowstormActive = false;
+      document.body.style.filter = 'none';
+    }, 3000);
+  }
 }
 
 function moveCookie() {
@@ -158,5 +196,7 @@ prestigeButton.addEventListener("click", () => {
 });
 
 setInterval(spawnGoldenCookie, 10000);
+setInterval(spawnSnowflake, 300);
+setInterval(startSnowstorm, 500);
 
 updateCounter();
