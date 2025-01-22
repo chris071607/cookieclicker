@@ -13,7 +13,7 @@
         padding: 0;
         height: 100vh;
         overflow: hidden;
-        user-select: none; /* Disable text selection */
+        user-select: none; 
       }
 
       h1 {
@@ -32,7 +32,7 @@
         border-radius: 50%;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         transform: scale(1);
-        user-drag: none; /* Prevent dragging */
+        user-drag: none;
       }
 
       #cookie:active {
@@ -215,7 +215,7 @@
 
       function spawnGoldenCookie() {
         const goldenCookie = document.createElement("img");
-        goldenCookie.src = "golden_cookie.png"; // Add a golden cookie image
+        goldenCookie.src = "golden_cookie.png"; 
         goldenCookie.style.position = "absolute";
         goldenCookie.style.top = `${Math.random() * window.innerHeight}px`;
         goldenCookie.style.left = `${Math.random() * window.innerWidth}px`;
@@ -223,12 +223,12 @@
         goldenCookie.style.width = "50px";
         goldenCookie.addEventListener("click", () => {
           goldenCookies++;
-          cookieCount += 50 * multiplier; // Golden cookie adds a larger bonus
+          cookieCount += 50 * multiplier; 
           updateCounter();
-          goldenCookie.remove(); // Remove golden cookie after click
+          goldenCookie.remove(); 
         });
         document.body.appendChild(goldenCookie);
-        setTimeout(() => goldenCookie.remove(), 5000); // Remove golden cookie after 5 seconds
+        setTimeout(() => goldenCookie.remove(), 5000);
       }
 
       function moveCookie() {
@@ -313,7 +313,7 @@
         }
       });
 
-      setInterval(spawnGoldenCookie, 10000); // Spawn a golden cookie every 10 seconds
+      setInterval(spawnGoldenCookie, 10000); 
 
       updateCounter();
     </script>
