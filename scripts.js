@@ -154,7 +154,7 @@ cookie.addEventListener("click", (e) => {
   cookieCount += multiplier;
   updateCounter();
   showTooltip(multiplier, e.pageX, e.pageY);
-  moveCookie();
+
 });
 
 autoClickerButton.addEventListener("click", () => {
